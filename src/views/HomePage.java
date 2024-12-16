@@ -1,4 +1,5 @@
 package views;
+import components.CustomButton;
 import components.Navbar;
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ public class HomePage extends JFrame {
         setTitle("SpinWheels - Home");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         Image icon = Toolkit.getDefaultToolkit().getImage("favicon.png");
         setIconImage(icon);
@@ -36,11 +38,7 @@ public class HomePage extends JFrame {
         subtitle.setFont(new Font("Poppins", Font.PLAIN, 18));
         subtitle.setForeground(new Color(108, 117, 125));
 
-        JButton browseButton = new JButton("Browse Bicycles");
-        browseButton.setBackground(new Color(139, 177, 152));
-        browseButton.setForeground(Color.WHITE);
-        browseButton.setFocusPainted(false);
-        browseButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        CustomButton browseButton = new CustomButton("Browse Bicycles");
         browseButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         textPanel.add(title);

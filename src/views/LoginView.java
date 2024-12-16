@@ -2,7 +2,8 @@ package views;
 
 import components.CustomButton;
 import components.CustomInputField;
-import controllers.DatabaseController;
+import controllers.UserController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,6 +29,7 @@ public class LoginView extends JFrame {
         setTitle("SpinWheels - Login");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setBackground(new Color(240, 240, 240));
         setLocationRelativeTo(null);
         setLayout(null);
@@ -117,8 +119,8 @@ public class LoginView extends JFrame {
                     return;
                 }
 
-                DatabaseController dbHelper = new DatabaseController();
-                int userId = dbHelper.authenticateUser(email, password);
+                UserController userController = new UserController();
+                int userId = userController.authenticateUser(email, password);
 
                 if (userId != 0) {
                     JOptionPane.showMessageDialog(null, "Login Successful!");

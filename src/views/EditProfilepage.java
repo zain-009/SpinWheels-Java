@@ -1,17 +1,26 @@
 package views;
+
 import components.CustomButton;
 import components.CustomInputField;
+import components.Navbar;
 import controllers.UserController;
 import models.User;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class SignupView extends JFrame {
+public class EditProfilepage extends JFrame {
+    int userId;
+    User user;
 
-    //refactored
     private boolean validateFields(String name, String email, String cnic, String phone, String password) {
         if (name.isEmpty() || email.isEmpty() || cnic.isEmpty() || phone.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(null, "All fields are required.");
+            return false;
+        }
+        if (!name.matches("^[abc]+$")) {
+            JOptionPane.showMessageDialog(null, "Name can only contain the letters!");
             return false;
         }
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
@@ -33,8 +42,11 @@ public class SignupView extends JFrame {
         return true;
     }
 
-    public SignupView() {
-        setTitle("SpinWheels - Signup");
+    public EditProfilepage(int userId, User user) {
+        this.userId = userId;
+        this.user = user;
+
+        setTitle("SpinWheels - Edit Profile");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -44,23 +56,21 @@ public class SignupView extends JFrame {
         Image icon = Toolkit.getDefaultToolkit().getImage("favicon.png");
         setIconImage(icon);
 
-        JLabel logoLabel = new JLabel("SpinWheels", SwingConstants.CENTER);
-        logoLabel.setFont(new Font("SansSerif", Font.BOLD, 32));
-        logoLabel.setForeground(new Color(107, 141, 120));
-        logoLabel.setBounds(650,50,200,60);
-        add(logoLabel);
-
         JPanel signupPanel = new JPanel();
         signupPanel.setBackground(Color.WHITE);
         signupPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         signupPanel.setLayout(new BoxLayout(signupPanel, BoxLayout.Y_AXIS));
-        signupPanel.setBounds(510,130,500,600);
+        signupPanel.setBounds(510,100,500,600);
         add(signupPanel);
+
+        Navbar navbar = new Navbar(this,userId);
+        navbar.setBounds(0, 0, 1550, 60);
+        add(navbar);
 
         JPanel welcomePanel = new JPanel();
         welcomePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         welcomePanel.setBackground(Color.WHITE);
-        JLabel welcomeLabel = new JLabel("Signup", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("Edit Profile", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         welcomePanel.add(welcomeLabel);
         signupPanel.add(welcomePanel);
@@ -78,6 +88,7 @@ public class SignupView extends JFrame {
         nameInputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         nameInputPanel.setBackground(Color.WHITE);
         CustomInputField nameField = new CustomInputField();
+        nameField.setText(user.getName());
         nameField.setPreferredSize(new Dimension(450, 40));
         nameInputPanel.add(nameField);
         signupPanel.add(nameInputPanel);
@@ -94,6 +105,7 @@ public class SignupView extends JFrame {
         emailInputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         emailInputPanel.setBackground(Color.WHITE);
         CustomInputField emailField = new CustomInputField();
+        emailField.setText(user.getEmail());
         emailField.setPreferredSize(new Dimension(450, 40));
         emailInputPanel.add(emailField);
         signupPanel.add(emailInputPanel);
@@ -110,6 +122,7 @@ public class SignupView extends JFrame {
         cnicInputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         cnicInputPanel.setBackground(Color.WHITE);
         CustomInputField cnicField = new CustomInputField();
+        cnicField.setText(user.getCnic());
         cnicField.setPreferredSize(new Dimension(450, 40));
         cnicInputPanel.add(cnicField);
         signupPanel.add(cnicInputPanel);
@@ -126,6 +139,7 @@ public class SignupView extends JFrame {
         phoneInputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         phoneInputPanel.setBackground(Color.WHITE);
         CustomInputField phoneField = new CustomInputField();
+        phoneField.setText(user.getPhone());
         phoneField.setPreferredSize(new Dimension(450, 40));
         phoneInputPanel.add(phoneField);
         signupPanel.add(phoneInputPanel);
@@ -142,65 +156,62 @@ public class SignupView extends JFrame {
         passwordInputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         passwordInputPanel.setBackground(Color.WHITE);
         CustomInputField passwordField = new CustomInputField();
+        passwordField.setText(user.getPassword());
         passwordField.setPreferredSize(new Dimension(450, 40));
         passwordInputPanel.add(passwordField);
         signupPanel.add(passwordInputPanel);
 
+        JPanel rentingPanel = new JPanel();
+        rentingPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        rentingPanel.setBackground(Color.WHITE);
+        JCheckBox rentingCheckBox = new JCheckBox("Renting");
+        rentingCheckBox.setSelected(user.getIsRenting());
+        rentingPanel.add(rentingCheckBox);
+        signupPanel.add(rentingPanel);
+
         JPanel signupButtonPanel = new JPanel();
         signupButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         signupButtonPanel.setBackground(Color.WHITE);
-        CustomButton signupButton = new CustomButton("Signup");
-        signupButtonPanel.add(signupButton);
+        CustomButton saveButton = new CustomButton("Save");
+        CustomButton backButton = new CustomButton("Back");
+        signupButtonPanel.add(backButton);
+        signupButtonPanel.add(saveButton);
         signupPanel.add(signupButtonPanel);
 
-
-        JLabel loginLabel = new JLabel("Already have an account? Login");
-        loginLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        loginLabel.setForeground(new Color(107, 141, 120));
-        loginLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        loginLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        signupPanel.add(loginLabel);
-
-
-        loginLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                dispose();
-                new LoginView().setVisible(true);
-            }
-        });
-
-        signupButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        saveButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 String name = nameField.getText();
                 String cnic = cnicField.getText();
                 String email = emailField.getText();
                 String phone = phoneField.getText();
                 String password = passwordField.getText();
-                boolean isRenting = false;
+                boolean isRenting = rentingCheckBox.isSelected();
 
                 if (!validateFields(name, email, cnic, phone, password)) {
                     return;
                 }
 
-                User newUser = new User(name, email, cnic, phone, password, isRenting);
+                User user = new User(name, email, cnic, phone, password, isRenting);
 
                 UserController userController = new UserController();
-                boolean success = userController.createUser(newUser);
+                boolean success = userController.update(userId, user);
 
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "Account created successfully!");
+                    JOptionPane.showMessageDialog(null, "Details updated successfully!");
                     dispose();
-                    new LoginView().setVisible(true);
+                    new ProfilePage(userId).setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Error creating Account!.");
+                    JOptionPane.showMessageDialog(null, "Error updating Details!");
                 }
             }
         });
 
+        backButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                dispose();
+                new ProfilePage(userId).setVisible(true);
+            }
+        });
 
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new SignupView().setVisible(true));
     }
 }

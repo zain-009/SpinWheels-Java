@@ -12,8 +12,16 @@ public class Migrations {
 //    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when the user was created
 //    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Timestamp when the user was last updated
 //);
-
-
-
-
+//
+//    CREATE TABLE bicycles (
+//            id INT AUTO_INCREMENT PRIMARY KEY,
+//            name VARCHAR(255) NOT NULL,
+//    year INT NOT NULL,
+//    weight FLOAT NOT NULL,
+//    current_condition ENUM('Average', 'Good', 'Excellent', 'Perfect') NOT NULL,
+//    hourly_rate INT NOT NULL,
+//    location VARCHAR(255) NOT NULL,
+//    user_id INT NOT NULL,
+//    FOREIGN KEY (user_id) REFERENCES users(id)
+//            );
 }

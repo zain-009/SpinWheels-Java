@@ -1,9 +1,10 @@
 package controllers;
-import java.sql.*;
+
 import models.User;
 import javax.swing.*;
+import java.sql.*;
 
-public class DatabaseController {
+public class UserController {
     private static final String URL = "jdbc:mysql://localhost:3306/spinwheels";
     private static final String USER = "root";
     private static final String PASSWORD = "";
@@ -81,7 +82,7 @@ public class DatabaseController {
         }
 
         User user = null;
-        String query = "SELECT name, cnic, email, phone, isRenting FROM users WHERE id = ?";
+        String query = "SELECT name, cnic, email, phone, password, isRenting FROM users WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)){
 
@@ -93,9 +94,10 @@ public class DatabaseController {
                 String cnic = result.getString("cnic");
                 String email = result.getString("email");
                 String phone = result.getString("phone");
+                String password = result.getString("password");
                 boolean isRenting = result.getBoolean("isRenting");
 
-                user = new User(name, email, cnic, phone, null, isRenting);
+                user = new User(name, email, cnic, phone, password, isRenting);
 
                 return user;
             }
@@ -106,18 +108,54 @@ public class DatabaseController {
         return user;
     }
 
-    public static void disconnect() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Disconnected from the database!");
+    public String getRenterPhone(int userId) {
+        if (connection == null) {
+            connect();
+        }
+        String query = "SELECT phone FROM users WHERE id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+
+            statement.setInt(1, userId);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                String phone = result.getString("phone");
+                return phone;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public boolean update(int userId, User user) {
+        if (connection == null) {
+            connect();
+        }
+
+        String query = "UPDATE users SET email = ?, phone = ?, password = ?, isRenting = ? WHERE id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, user.getEmail());
+            statement.setString(2, user.getPhone());
+            statement.setString(3, user.getPassword());
+            statement.setBoolean(4, user.getIsRenting());
+            statement.setInt(5, userId);
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {
-        Connection connection = DatabaseController.connect();
+        Connection connection = BicycleController.connect();
     }
 }

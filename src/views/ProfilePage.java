@@ -1,7 +1,8 @@
 package views;
 
+import components.CustomButton;
 import components.Navbar;
-import controllers.DatabaseController;
+import controllers.UserController;
 import models.User;
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +16,12 @@ public class ProfilePage extends JFrame {
         setTitle("SpinWheels - Profile");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setBackground(new Color(240, 240, 240));
         setLocationRelativeTo(null);
         setLayout(null);
+        Image icon = Toolkit.getDefaultToolkit().getImage("favicon.png");
+        setIconImage(icon);
 
         Navbar navbar = new Navbar(this,userId);
         navbar.setBounds(0, 0, 1550, 60);
@@ -36,8 +40,8 @@ public class ProfilePage extends JFrame {
         profilePanel.setBounds(300,140,900,500);
         add(profilePanel);
 
-        DatabaseController dbHelper = new DatabaseController();
-        User user = dbHelper.getUserData(userId);
+        UserController userController = new UserController();
+        User user = userController.getUserData(userId);
 
         if (user != null) {
             JLabel nameLabel = new JLabel("Name", SwingConstants.CENTER);
@@ -90,7 +94,32 @@ public class ProfilePage extends JFrame {
             JLabel isRenting = new JLabel(user.getIsRenting() ? "Yes" : "No", SwingConstants.CENTER);
             isRenting.setFont(new Font("SansSerif", Font.PLAIN, 18));
             profilePanel.add(isRenting);
-        }
 
+
+            profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+
+            CustomButton loginButton = new CustomButton("Rent your Bicycle");
+            profilePanel.add(loginButton);
+
+            profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+            CustomButton editProfileButton = new CustomButton("      Edit Profile      ");
+            profilePanel.add(editProfileButton);
+
+            loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    dispose();
+                    new AddBicyclePage(userId).setVisible(true);
+                }
+            });
+
+            editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    dispose();
+                    new EditProfilepage(userId, user).setVisible(true);
+                }
+            });
+        }
     }
 }
