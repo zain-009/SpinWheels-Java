@@ -6,6 +6,8 @@ import controllers.UserController;
 import models.User;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProfilePage extends JFrame {
     int userId;
@@ -99,23 +101,35 @@ public class ProfilePage extends JFrame {
             profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
 
-            CustomButton loginButton = new CustomButton("Rent your Bicycle");
-            profilePanel.add(loginButton);
+            CustomButton listButton = new CustomButton("Rent your Bicycle");
+            profilePanel.add(listButton);
 
             profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
             CustomButton editProfileButton = new CustomButton("      Edit Profile      ");
             profilePanel.add(editProfileButton);
 
-            loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
+            profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+            CustomButton logoutButton = new CustomButton("         Logout          ");
+            profilePanel.add(logoutButton);
+
+            listButton.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent evt) {
                     dispose();
                     new AddBicyclePage(userId).setVisible(true);
                 }
             });
 
-            editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
+            logoutButton.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent evt) {
+                    dispose();
+                    new LoginView().setVisible(true);
+                }
+            });
+
+            editProfileButton.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent evt) {
                     dispose();
                     new EditProfilepage(userId, user).setVisible(true);
                 }

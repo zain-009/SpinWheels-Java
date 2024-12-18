@@ -14,15 +14,19 @@ public class SignupView extends JFrame {
             JOptionPane.showMessageDialog(null, "All fields are required.");
             return false;
         }
+        if (!name.matches("[a-zA-Z\\s]+")) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid name.");
+            return false;
+        }
+        if (cnic.length() != 15 || !cnic.matches("\\d{5}-\\d{7}-\\d")) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid CNIC in the format XXXXX-XXXXXXX-X.");
+            return false;
+        }
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             JOptionPane.showMessageDialog(null, "Please enter a valid email address.");
             return false;
         }
-        if (cnic.length() != 15) {
-            JOptionPane.showMessageDialog(null, "Please enter a valid CNIC including dashes.");
-            return false;
-        }
-        if (phone.length() != 11) {
+        if (phone.length() != 11 || !phone.matches("\\d+")) {
             JOptionPane.showMessageDialog(null, "Please enter a valid phone number.");
             return false;
         }
@@ -171,6 +175,8 @@ public class SignupView extends JFrame {
 
         signupButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+
+                //Get user data from input fields
                 String name = nameField.getText();
                 String cnic = cnicField.getText();
                 String email = emailField.getText();
@@ -182,8 +188,10 @@ public class SignupView extends JFrame {
                     return;
                 }
 
+                //Create user object using fetched data
                 User newUser = new User(name, email, cnic, phone, password, isRenting);
 
+                //Create controller instance and call create method
                 UserController userController = new UserController();
                 boolean success = userController.createUser(newUser);
 
@@ -200,7 +208,4 @@ public class SignupView extends JFrame {
 
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new SignupView().setVisible(true));
-    }
 }

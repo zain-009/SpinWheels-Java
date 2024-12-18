@@ -9,12 +9,7 @@ import java.awt.event.MouseEvent;
 
 public class Navbar extends JPanel {
 
-    private JFrame parentFrame;
-    int userId;
-
     public Navbar(JFrame parentFrame, int userId) {
-        this.parentFrame = parentFrame;
-        this.userId = userId;
 
         setLayout(new BorderLayout());
         setBackground(new Color(139, 177, 152));
@@ -47,6 +42,7 @@ public class Navbar extends JPanel {
 
         homeLink.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
+                //dispose the current frame or screen
                 parentFrame.dispose();
                 new HomePage(userId).setVisible(true);
             }

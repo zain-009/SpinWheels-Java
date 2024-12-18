@@ -14,24 +14,17 @@ public class EditProfilepage extends JFrame {
     int userId;
     User user;
 
+    //Ensure correct data is inserted
     private boolean validateFields(String name, String email, String cnic, String phone, String password) {
-        if (name.isEmpty() || email.isEmpty() || cnic.isEmpty() || phone.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(null, "All fields are required.");
-            return false;
-        }
-        if (!name.matches("^[abc]+$")) {
-            JOptionPane.showMessageDialog(null, "Name can only contain the letters!");
             return false;
         }
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             JOptionPane.showMessageDialog(null, "Please enter a valid email address.");
             return false;
         }
-        if (cnic.length() != 15) {
-            JOptionPane.showMessageDialog(null, "Please enter a valid CNIC including dashes.");
-            return false;
-        }
-        if (phone.length() != 11) {
+        if (phone.length() != 11 || !phone.matches("\\d+")) {
             JOptionPane.showMessageDialog(null, "Please enter a valid phone number.");
             return false;
         }
@@ -90,6 +83,7 @@ public class EditProfilepage extends JFrame {
         CustomInputField nameField = new CustomInputField();
         nameField.setText(user.getName());
         nameField.setPreferredSize(new Dimension(450, 40));
+        nameField.setEditable(false);
         nameInputPanel.add(nameField);
         signupPanel.add(nameInputPanel);
 
@@ -123,6 +117,7 @@ public class EditProfilepage extends JFrame {
         cnicInputPanel.setBackground(Color.WHITE);
         CustomInputField cnicField = new CustomInputField();
         cnicField.setText(user.getCnic());
+        cnicField.setEditable(false);
         cnicField.setPreferredSize(new Dimension(450, 40));
         cnicInputPanel.add(cnicField);
         signupPanel.add(cnicInputPanel);
@@ -165,6 +160,8 @@ public class EditProfilepage extends JFrame {
         rentingPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         rentingPanel.setBackground(Color.WHITE);
         JCheckBox rentingCheckBox = new JCheckBox("Renting");
+        rentingCheckBox.setFocusPainted(false);
+        rentingCheckBox.setBackground(Color.WHITE);
         rentingCheckBox.setSelected(user.getIsRenting());
         rentingPanel.add(rentingCheckBox);
         signupPanel.add(rentingPanel);
@@ -180,6 +177,8 @@ public class EditProfilepage extends JFrame {
 
         saveButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
+
+                //Get user data from input fields
                 String name = nameField.getText();
                 String cnic = cnicField.getText();
                 String email = emailField.getText();
@@ -191,8 +190,10 @@ public class EditProfilepage extends JFrame {
                     return;
                 }
 
+                //Create user object using fetched data
                 User user = new User(name, email, cnic, phone, password, isRenting);
 
+                //Create controller instance and call update method
                 UserController userController = new UserController();
                 boolean success = userController.update(userId, user);
 
@@ -202,6 +203,8 @@ public class EditProfilepage extends JFrame {
                     new ProfilePage(userId).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "Error updating Details!");
+                    dispose();
+                    new ProfilePage(userId).setVisible(true);
                 }
             }
         });

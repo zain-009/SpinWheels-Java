@@ -5,30 +5,11 @@ import javax.swing.*;
 import java.sql.*;
 
 public class UserController {
-    private static final String URL = "jdbc:mysql://localhost:3306/spinwheels";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-    private static Connection connection;
 
-    public static Connection connect() {
-        if (connection == null) {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Connected to the database!");
-            } catch (ClassNotFoundException | SQLException e) {
-                System.out.println("Failed to connect to the database!");
-                e.printStackTrace();
-            }
-        }
-        return connection;
-    }
+    private static final Connection connection = DatabaseConnector.getConnection();
 
+    //Store new user in database
     public boolean createUser(User user) {
-        if (connection == null) {
-            connect();
-        }
-
         String query = "INSERT INTO users (name, email, cnic, phone, password, isRenting) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, user.getName());
@@ -38,6 +19,7 @@ public class UserController {
             statement.setString(5, user.getPassword());
             statement.setBoolean(6, user.getIsRenting());
 
+            //execute query
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
@@ -48,17 +30,14 @@ public class UserController {
         }
     }
 
+    //Validate user login credentials from database
     public int authenticateUser(String email, String password) {
-
-        if (connection == null) {
-            connect();
-        }
-
         String query = "SELECT * FROM users WHERE email = ? AND password = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, email);
             statement.setString(2, password);
 
+            //execute query
             ResultSet result = statement.executeQuery();
 
             if (result.next()) {
@@ -76,17 +55,15 @@ public class UserController {
         }
     }
 
+    //Get User record by matching user id
     public User getUserData(int userId) {
-        if (connection == null) {
-            connect();
-        }
-
         User user = null;
         String query = "SELECT name, cnic, email, phone, password, isRenting FROM users WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)){
-
             stmt.setInt(1, userId);
+
+            //execute query
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
@@ -109,9 +86,6 @@ public class UserController {
     }
 
     public String getRenterPhone(int userId) {
-        if (connection == null) {
-            connect();
-        }
         String query = "SELECT phone FROM users WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)){
@@ -129,11 +103,8 @@ public class UserController {
         return null;
     }
 
+    //Update user details
     public boolean update(int userId, User user) {
-        if (connection == null) {
-            connect();
-        }
-
         String query = "UPDATE users SET email = ?, phone = ?, password = ?, isRenting = ? WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -143,6 +114,7 @@ public class UserController {
             statement.setBoolean(4, user.getIsRenting());
             statement.setInt(5, userId);
 
+            //Execute query
             int rowsUpdated = statement.executeUpdate();
 
             if (rowsUpdated > 0) {
@@ -153,9 +125,5 @@ public class UserController {
         }
 
         return false;
-    }
-
-    public static void main(String[] args) {
-        Connection connection = BicycleController.connect();
     }
 }
